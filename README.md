@@ -24,7 +24,7 @@ Esto instala todas las dependencias automáticamente (~200MB, solo la primera ve
 
 ## Uso
 
-1. Haz doble click en **`run.bat`**
+1. Haz doble click en **`run.vbs`**
 2. Rellena tus datos la primera vez (se guardan automáticamente)
 3. Pulsa **Ejecutar Bot**
 
@@ -52,6 +52,6 @@ foodhub-app/
 ├── app.py        # Interfaz gráfica
 ├── bot.py        # Lógica del bot
 ├── setup.bat     # Instalador (ejecutar una vez)
-├── run.bat       # Lanzador
+├── run.vbs       # Lanzador
 └── config.json   # Tus datos (se crea automáticamente)
 ```
