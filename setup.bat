@@ -1,6 +1,6 @@
 @echo off
 echo ============================================
-echo   Food Hub Bot — Instalacion
+echo   Food Hub Bot: Instalacion
 echo ============================================
 echo.
 
@@ -15,7 +15,7 @@ if errorlevel 1 (
 )
 
 echo [1/3] Instalando dependencias...
-pip install camoufox[geoip] --quiet
+pip install -r "%~dp0requirements.txt" --quiet
 if errorlevel 1 (
     echo [ERROR] Fallo al instalar camoufox
     pause

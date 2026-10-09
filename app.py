@@ -1,5 +1,5 @@
 """
-Food Hub Ticket Bot — Interfaz gráfica
+Food Hub Ticket Bot: interfaz gráfica.
 """
 
 import tkinter as tk
@@ -10,6 +10,7 @@ import asyncio
 from pathlib import Path
 
 CONFIG_FILE = Path(__file__).parent / "config.json"
+DEFAULT_EVENT_URL = "https://events.humanitix.com/food-hub-2026-semester-1b"
 
 # ── Paleta ─────────────────────────────────────────────────────────────────────
 BG       = "#16161a"
@@ -61,7 +62,7 @@ class StyledEntry(tk.Frame):
 
 
 class StyledDropdown(tk.Frame):
-    """Dropdown personalizado sin ttk — con texto legible."""
+    """Dropdown personalizado sin ttk, con texto legible."""
     def __init__(self, parent, options, default="", **kwargs):
         super().__init__(parent, bg=BORDER, padx=1, pady=1)
         self.options   = options
@@ -280,7 +281,9 @@ class App(tk.Tk):
                 self._log(f"⚠ Rellena el campo: {key}", "err")
                 return
 
-        cfg = {k: v.get().strip() for k, v in self.fields.items()}
+        cfg = load_config()  # conserva claves que no están en la GUI (event_url)
+        cfg.setdefault("event_url", DEFAULT_EVENT_URL)
+        cfg.update({k: v.get().strip() for k, v in self.fields.items()})
         cfg.update({k: v.get() for k, v in self.dropdowns.items()})
         save_config(cfg)
 

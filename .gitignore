@@ -1,5 +1,22 @@
+# User data (personal details entered in the GUI)
 config.json
+.env
+.env.*
+
+# Python
 __pycache__/
 *.pyc
+.venv/
+venv/
+
+# Bot output
 resultado.png
 error_*.png
+*.log
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store

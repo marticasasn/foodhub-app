@@ -1,5 +1,5 @@
 """
-bot.py — Lógica del bot separada de la interfaz.
+bot.py: lógica del bot separada de la interfaz.
 Se importa desde app.py y también puede ejecutarse standalone.
 """
 
@@ -8,8 +8,8 @@ import re
 from datetime import datetime, timedelta
 from camoufox.async_api import AsyncCamoufox
 
-EVENT_URL        = "https://events.humanitix.com/food-hub-2026-semester-1b"
-BASE_TICKETS_URL = "https://events.humanitix.com/food-hub-2026-semester-1b/tickets"
+# Valor por defecto. Se puede cambiar con "event_url" en config.json (cambia cada semestre).
+DEFAULT_EVENT_URL = "https://events.humanitix.com/food-hub-2026-semester-1b"
 
 SLOTS = [
     (10,  0), (10, 30), (11,  0), (11, 30),
@@ -51,11 +51,11 @@ def parse_slot_date(text):
         return None
 
 
-async def fetch_today_slots(browser, log):
+async def fetch_today_slots(browser, event_url, log):
     today = datetime.now().date()
     page  = await browser.new_page()
     log("📋 Leyendo slots de hoy…", "live")
-    await page.goto(EVENT_URL, wait_until="domcontentloaded", timeout=60000)
+    await page.goto(event_url, wait_until="domcontentloaded", timeout=60000)
     await page.wait_for_timeout(2000)
 
     links = await page.evaluate('''() =>
@@ -118,8 +118,8 @@ async def select_dropdown(page, index, answer, log):
     await page.wait_for_timeout(300)
 
 
-async def book_ticket(browser, slot, cfg, log):
-    url       = f"{BASE_TICKETS_URL}?dateId={slot['date_id']}"
+async def book_ticket(browser, slot, cfg, event_url, log):
+    url       = f"{event_url}/tickets?dateId={slot['date_id']}"
     open_time = slot['open_time']
 
     # Esperar hasta 5s antes
@@ -233,16 +233,19 @@ async def book_ticket(browser, slot, cfg, log):
 
 
 async def run_bot(cfg, log):
-    """Punto de entrada principal — llamado desde app.py o standalone."""
+    """Punto de entrada principal. Se llama desde app.py o standalone."""
     now = datetime.now()
-    log(f"🤖 Food Hub Bot — {now.strftime('%A %d/%m/%Y %H:%M:%S')}", "live")
+    log(f"🤖 Food Hub Bot: {now.strftime('%A %d/%m/%Y %H:%M:%S')}", "live")
 
     if now.weekday() > 4:
         log("Hoy es fin de semana. No hay tickets.", "err")
         return
 
+    event_url = cfg.get('event_url') or DEFAULT_EVENT_URL
+    event_url = event_url.rstrip('/')
+
     async with AsyncCamoufox(headless=False, geoip=True) as browser:
-        slots = await fetch_today_slots(browser, log)
+        slots = await fetch_today_slots(browser, event_url, log)
         if not slots:
             log("No se encontraron slots para hoy.", "err")
             return
@@ -255,7 +258,7 @@ async def run_bot(cfg, log):
         log(f"🎯 Próxima tanda: {slot['event_hour']:02d}:{slot['event_min']:02d} "
             f"(abre {slot['open_time'].strftime('%H:%M')})", "live")
 
-        await book_ticket(browser, slot, cfg, log)
+        await book_ticket(browser, slot, cfg, event_url, log)
 
 
 # Standalone (sin GUI)
