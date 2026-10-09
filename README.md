@@ -81,3 +81,7 @@ foodhub-app/
 This project is a personal and educational experiment in browser automation. It is not affiliated with or endorsed by the USU, the University of Sydney or Humanitix.
 
 Anyone using it is responsible for complying with the terms of service of the platforms involved. The author does not encourage using it in ways that give an unfair advantage over other students or that break those terms.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
